@@ -3,9 +3,7 @@ package de.mxlink.cmapp;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,9 +43,6 @@ public class LEDMatrixBTConn {
     // The data stream used to receive data from the remote device.
     private volatile InputStream inStream;
 
-    // Main activity context.
-    private volatile Context mContext;
-
     // MAC address of the of the Bluetooth device.
     private volatile String mAddress;
 
@@ -72,9 +67,8 @@ public class LEDMatrixBTConn {
      * @param context The context of the main activity.
      * @param remoteBTDeviceName The name of the remote Bluetooth device that we will scan for.
      */
-    public LEDMatrixBTConn(Context context, String remoteBTDeviceName, int xSize, int ySize, int colorMode, String appName){
+    public LEDMatrixBTConn(String remoteBTDeviceName, int xSize, int ySize, int colorMode, String appName){
         mRemoteBTDeviceName = remoteBTDeviceName;
-        mContext = context;
         mAddress = null;
         mXSize = xSize;
         mYSize = ySize;
@@ -113,13 +107,11 @@ public class LEDMatrixBTConn {
 
         // Check if Bluetooth is available on the device.
         if (mBluetoothAdapter == null) {
-            Toast.makeText(mContext, "Bluetooth is not available on this device.", Toast.LENGTH_LONG).show();
             return false;
         }
 
         // Check if Bluetooth is enabled on the device.
         if (!mBluetoothAdapter.isEnabled()) {
-            Toast.makeText(mContext, "Please enable your BT and re-run this program.", Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -144,7 +136,6 @@ public class LEDMatrixBTConn {
 	    * If mAddress is null, the device is not paired.
 	    */
         if (mAddress == null) {
-            Toast.makeText(mContext, "Device with name " + mRemoteBTDeviceName + " is not paired. Please pair first then restart the app.", Toast.LENGTH_LONG).show();
             return false;
         }
 
