@@ -7,13 +7,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class Panel implements OnClickListener {
-
+	
 	private byte[] m_leds;
 
 	private GameMaster m_master;
 	
 	private boolean m_active;
-	private boolean m_success;
 
 	
 	public Panel(GameMaster master, byte[] pattern) {
@@ -28,22 +27,18 @@ public class Panel implements OnClickListener {
 	
 	public void activate() {
 		m_active = true;
-		m_success = false;
-	}
-
-	public boolean successfull() {
-		return m_success;
 	}
 	
-	public void deactivate() {
+	public void reset() {
 		m_active = false;
-		m_success = false;
 	}
 
 	@Override
 	public void onClick(View v) {
-		if (m_active)
-			m_success = true;
+		if (m_active) {
+			m_master.panelClicked(this);
+			m_active = false;
+		}
 		else {
 			List<Panel> list = new ArrayList<Panel>();
 			list.add(this);

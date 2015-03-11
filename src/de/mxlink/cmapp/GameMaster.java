@@ -12,11 +12,16 @@ public class GameMaster {
 	private static final int LEVEL_TWO = 20;
 
 	private List<Panel> m_panels;
+	private List<Panel> m_activePanels;
 	
 	private boolean m_gameOver;
 	
 	public GameMaster(List<Panel> panels) {
 		m_panels = panels;
+	}
+	
+	public GameMaster() {
+		m_panels = new ArrayList<Panel>(); 
 	}
 	
 	public void startGame() {
@@ -27,9 +32,9 @@ public class GameMaster {
 			currentPattern.clear();
 			round++;
 			int timeForRound = getTime(round);
-			List<Panel> panels = getPanels(round);
+			m_activePanels = getPanels(round);
 			Log.i("GAME", "round " + round + " with time " + timeForRound);
-			for (Panel p : panels) {
+			for (Panel p : m_activePanels) {
 				p.activate();
 				currentPattern.addLeds(p.getLeds());
 			}
@@ -37,18 +42,34 @@ public class GameMaster {
 			try {
 				Thread.sleep(timeForRound, 0);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			for (Panel p : panels)
-				if (!p.successfull())
-					gameOver(panels);
+			if (!m_activePanels.isEmpty())
+				gameOver(m_activePanels);
+			for (Panel p : m_panels)
+				p.reset();
 		}
 	}
 	
 	public void gameOver(List<Panel> panels) {
 		m_gameOver = true;
-		ConnectionMachineFactory.getMachine().closeConnection();
+		Pattern over = new Pattern(MainActivity.X_SIZE, MainActivity.Y_SIZE, ConnectionMachineFactory.getMachine());
+		for (Panel p : panels)
+			over.addLeds(p.getLeds());
+		
+		over.blink();
+	}
+	
+	public void setPanels(List<Panel> panels) {
+		this.m_panels = panels;
+	}
+	
+	public void panelClicked(Panel panel) {
+		m_activePanels.remove(panel);
+		Pattern pattern = new Pattern(MainActivity.X_SIZE, MainActivity.Y_SIZE, ConnectionMachineFactory.getMachine());
+		for (Panel p : m_activePanels)
+			pattern.addLeds(p.getLeds());
+		pattern.display();
 	}
 	
 	private List<Panel> getPanels(int round) {
@@ -75,7 +96,7 @@ public class GameMaster {
 	
 	private int getTime(int round) {
 		int rand = (int)Math.floor(Math.random() * 5) + 2;	// base is between 2 and 6 seconds
-		int time = 3000;
+		int time = 2000;
 		
 		time *= rand;
 		

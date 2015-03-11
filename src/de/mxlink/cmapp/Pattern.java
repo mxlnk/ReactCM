@@ -31,19 +31,9 @@ public class Pattern {
 	
 	public void display() {
 		// Start BT sending thread.
-        Thread sender = new Thread() {
-    		int sendDelay;
-            
+        Thread sender = new Thread() {            
             public void run() {
                 Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-
-				// Connected. Calculate and set send delay from maximum FPS.
-                // Negative maxFPS should not happen.
-                int maxFPS = m_matrix.getMaxFPS();
-                if (maxFPS > 0)
-                    sendDelay = (int) (1000.0 / maxFPS);
-                 else
- 					Log.e("ERROR", "error2");
 
 				// Fill message buffer.
 				byte[] msgBuffer = m_pattern;
@@ -52,13 +42,39 @@ public class Pattern {
 				// If write fails, the connection was probably closed by the server.
 				if (!m_matrix.write(msgBuffer))
 					Log.e("ERROR", "error3");
-				
-				try {
-					// Delay for a moment.
-                    // Note: Delaying the same amount of time every frame will not give you constant FPS.
-					Thread.sleep(sendDelay);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+			}
+		};
+		// Start sending thread.
+		sender.start();
+	}
+	
+	public void blink() {
+        Thread sender = new Thread() {
+            
+            public void run() {
+                Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+                
+                byte[] msgBuffer;
+                byte[] empty = new byte[m_x * m_y];
+				for (int i = 0; i < 11; i++) {
+					if (i % 2 == 0)
+						msgBuffer = empty;
+					else
+						msgBuffer = m_pattern;
+					
+					// If write fails, the connection was probably closed by the server.
+					if (!m_matrix.write(msgBuffer)) {
+						Log.e("ERROR", "error3");
+						break;
+					}
+					
+					try {
+						// Delay for a moment.
+	                    // Note: Delaying the same amount of time every frame will not give you constant FPS.
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}	
 				}
 			}
 		};

@@ -43,19 +43,22 @@ public class GameActivity extends Activity {
 			else if (i >= (MainActivity.X_SIZE * MainActivity.Y_SIZE) / 2 && (i / 12) % 2 == 1)
 				lowerRightLEDs[i] = (byte)255;
 		
-				
-		m_upperLeft = new Panel(m_master, upperLeftLEDs);
-		m_upperRight = new Panel(m_master, upperRightLEDs);
-		m_lowerLeft = new Panel(m_master, lowerLeftLEDs);
-		m_lowerRight = new Panel(m_master, lowerRightLEDs);
-
+		m_master = new GameMaster();
+		
 		m_upperLeftButton = (Button)findViewById(R.id.buttonUpperLeft);
+		m_upperLeft = new Panel(m_master, upperLeftLEDs);
 		m_upperLeftButton.setOnClickListener(m_upperLeft);
+		
 		m_upperRightButton = (Button)findViewById(R.id.buttonUpperRight);
+		m_upperRight = new Panel(m_master, upperRightLEDs);
 		m_upperRightButton.setOnClickListener(m_upperRight);
+		
 		m_lowerLeftButton = (Button)findViewById(R.id.buttonLowerLeft);
+		m_lowerLeft = new Panel(m_master, lowerLeftLEDs);
 		m_lowerLeftButton.setOnClickListener(m_lowerLeft);
+		
 		m_lowerRightButton = (Button)findViewById(R.id.buttonLowerRight);
+		m_lowerRight = new Panel(m_master, lowerRightLEDs);
 		m_lowerRightButton.setOnClickListener(m_lowerRight);
 		
 		List<Panel> panels = new ArrayList<Panel>();
@@ -63,7 +66,7 @@ public class GameActivity extends Activity {
 		panels.add(m_upperRight);
 		panels.add(m_lowerLeft);
 		panels.add(m_lowerRight);
-		m_master = new GameMaster(panels);
+		m_master.setPanels(panels);
 		
 		PlayGame game = new PlayGame();
 		game.execute();
