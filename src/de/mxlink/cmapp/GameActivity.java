@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 public class GameActivity extends Activity {
@@ -25,10 +24,16 @@ public class GameActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+        // take over orientation from previous activity, but don't allow changes
+        /*int orientation = getIntent().getExtras().getInt(MainActivity.ORIENTATION);
+        getResources().getConfiguration();
+		if (orientation == Configuration.ORIENTATION_LANDSCAPE)  
+        	requestWindowFeature(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        else
+        	requestWindowFeature(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		*/
         setContentView(R.layout.activity_game);
-
 
 		byte[] upperLeftLEDs = new byte[MainActivity.X_SIZE * MainActivity.Y_SIZE];
 		byte[] upperRightLEDs = new byte[MainActivity.X_SIZE * MainActivity.Y_SIZE];
@@ -71,8 +76,8 @@ public class GameActivity extends Activity {
 		m_master.setPanels(panels);
 		
 		int round = 0;
-		//if (savedInstanceState != null)
-		//	round = savedInstanceState.getInt(ROUND);
+		if (savedInstanceState != null)
+			round = savedInstanceState.getInt(ROUND);
 		PlayGame game = new PlayGame(round);
 		game.execute();
 	}
@@ -81,23 +86,15 @@ public class GameActivity extends Activity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		
 		if (m_master != null)
 			outState.putInt(ROUND, m_master.getRound());
-	}
+	}*/
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		ConnectionMachineFactory.getMachine().onPause();
+		ConnectionMachineFactory.getMachine().closeConnection();
 	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		ConnectionMachineFactory.getMachine().connect();
-	}*/
-	
 	
 	private class PlayGame extends AsyncTask<Void,Void,Void> {
 		private int m_round;
@@ -110,7 +107,6 @@ public class GameActivity extends Activity {
 			try {
 				Thread.sleep(5000, 0);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			m_master.startGame(m_round);

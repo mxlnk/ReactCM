@@ -8,7 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 public class MainActivity extends Activity {
-
+//	public static final String ORIENTATION = "de.mxlink.orientation";
+	
 	private LEDMatrixBTConn BT;
 	protected static final String REMOTE_BT_DEVICE_NAME = "ubuntu-gnome-0";
 
@@ -37,13 +38,14 @@ public class MainActivity extends Activity {
 	public void start(View v) {
 		mStartButton.setEnabled(false);
 
-		if (ConnectionMachineFactory.getMachine() == null) {
+		if ((BT = ConnectionMachineFactory.getMachine()) == null) {
 			Toast.makeText(this, "is your bluetooth on and are you paired?", 10 * 1000).show();;
 			mStartButton.setEnabled(true);
 			return;
 		}
-			
+		
         Intent intent = new Intent(this, GameActivity.class);
+//        intent.putExtra(ORIENTATION, getResources().getConfiguration().orientation);
         startActivity(intent);        
 	}
 

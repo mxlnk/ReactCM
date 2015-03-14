@@ -14,6 +14,7 @@ public class GameOverActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.game_over_activity);
 		
 		TextView rounds = (TextView) findViewById(R.id.roundText);
@@ -33,18 +34,7 @@ public class GameOverActivity extends Activity {
 		}
 			
         Intent intent = new Intent(this, GameActivity.class);
+//        intent.putExtra(MainActivity.ORIENTATION, getResources().getConfiguration().orientation);
         startActivity(intent);      
 	}
-	/*
-	@Override
-	protected void onPause() {
-		super.onPause();
-		ConnectionMachineFactory.getMachine().onPause();
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		ConnectionMachineFactory.getMachine().connect();
-	}*/
 }
