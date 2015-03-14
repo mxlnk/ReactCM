@@ -3,10 +3,14 @@ package de.mxlink.cmapp;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 
 public class GameMaster {
-
+	public static final String ROUNDS = "de.mxlink.rounds";
+	
+	private Activity m_gameActivity;
 	
 	private static final int LEVEL_ONE = 5;
 	private static final int LEVEL_TWO = 20;
@@ -15,25 +19,31 @@ public class GameMaster {
 	private List<Panel> m_activePanels;
 	
 	private boolean m_gameOver;
+	private int m_round;
 	
-	public GameMaster(List<Panel> panels) {
-		m_panels = panels;
+	public GameMaster(Activity activity) {
+		m_panels = new ArrayList<Panel>();
+		m_gameActivity = activity;
 	}
 	
-	public GameMaster() {
-		m_panels = new ArrayList<Panel>(); 
+	public int getRound() {
+		return m_round;
 	}
 	
-	public void startGame() {
+	/**
+	 * start game starting in round
+	 * @param round the round to start from
+	 */
+	public void startGame(int round) {
 		m_gameOver = false;
-		int round = 0;
+		m_round = round;
 		Pattern currentPattern = new Pattern(MainActivity.X_SIZE, MainActivity.Y_SIZE, ConnectionMachineFactory.getMachine());
 		while(!m_gameOver) {
 			currentPattern.clear();
-			round++;
-			int timeForRound = getTime(round);
-			m_activePanels = getPanels(round);
-			Log.i("GAME", "round " + round + " with time " + timeForRound);
+			m_round++;
+			int timeForRound = getTime(m_round);
+			m_activePanels = getPanels(m_round);
+			Log.i("GAME", "round " + m_round + " with time " + timeForRound);
 			for (Panel p : m_activePanels) {
 				p.activate();
 				currentPattern.addLeds(p.getLeds());
@@ -44,26 +54,43 @@ public class GameMaster {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if (!m_activePanels.isEmpty())
+			if (!m_activePanels.isEmpty() && !m_gameOver)
 				gameOver(m_activePanels);
 			for (Panel p : m_panels)
 				p.reset();
 		}
 	}
 	
+	/**
+	 * end game
+	 * @param panels the panels that caused gameOver
+	 */
 	public void gameOver(List<Panel> panels) {
 		m_gameOver = true;
 		Pattern over = new Pattern(MainActivity.X_SIZE, MainActivity.Y_SIZE, ConnectionMachineFactory.getMachine());
 		for (Panel p : panels)
 			over.addLeds(p.getLeds());
 		
-		over.blink();
+		int delay = over.blink();
+		
+		try {
+			Thread.sleep(delay, 0);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Intent intent = new Intent(m_gameActivity, GameOverActivity.class);
+		intent.putExtra(ROUNDS, "" + (m_round - 1));
+		m_gameActivity.startActivity(intent);
 	}
 	
 	public void setPanels(List<Panel> panels) {
 		this.m_panels = panels;
 	}
 	
+	/**
+	 * called if a panel gets clicked
+	 * @param panel the panel that got clicked
+	 */
 	public void panelClicked(Panel panel) {
 		m_activePanels.remove(panel);
 		Pattern pattern = new Pattern(MainActivity.X_SIZE, MainActivity.Y_SIZE, ConnectionMachineFactory.getMachine());
@@ -108,5 +135,9 @@ public class GameMaster {
 			time /= 4;
 		
 		return time;
+	}
+	
+	public boolean gameOver() {
+		return m_gameOver;
 	}
 }

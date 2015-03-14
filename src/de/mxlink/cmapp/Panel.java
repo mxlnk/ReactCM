@@ -40,9 +40,11 @@ public class Panel implements OnClickListener {
 			m_active = false;
 		}
 		else {
-			List<Panel> list = new ArrayList<Panel>();
-			list.add(this);
-			m_master.gameOver(list);
+			if (!m_master.gameOver()) {
+				List<Panel> list = new ArrayList<Panel>();
+				list.add(this);
+				m_master.gameOver(list);
+			}
 		}
 			
 	}

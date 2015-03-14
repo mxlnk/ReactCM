@@ -267,6 +267,10 @@ public class LEDMatrixBTConn {
     public void closeConnection() {
         this.closeSocket();
     }
+    
+    public boolean isConnected() {
+    	return this.btSocket.isConnected();
+    }
 
     /**
      * Sends the given data to the remote Bluetooth device.

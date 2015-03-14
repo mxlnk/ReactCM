@@ -41,14 +41,14 @@ public class Pattern {
 
 				// If write fails, the connection was probably closed by the server.
 				if (!m_matrix.write(msgBuffer))
-					Log.e("ERROR", "error3");
+					Log.e("ERROR", "failed to write");
 			}
 		};
 		// Start sending thread.
 		sender.start();
 	}
 	
-	public void blink() {
+	public int blink() {
         Thread sender = new Thread() {
             
             public void run() {
@@ -64,13 +64,12 @@ public class Pattern {
 					
 					// If write fails, the connection was probably closed by the server.
 					if (!m_matrix.write(msgBuffer)) {
-						Log.e("ERROR", "error3");
+						Log.e("ERROR", "failed to write");
 						break;
 					}
 					
 					try {
 						// Delay for a moment.
-	                    // Note: Delaying the same amount of time every frame will not give you constant FPS.
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -80,5 +79,6 @@ public class Pattern {
 		};
 		// Start sending thread.
 		sender.start();
+		return 12 * 500;
 	}
 }
