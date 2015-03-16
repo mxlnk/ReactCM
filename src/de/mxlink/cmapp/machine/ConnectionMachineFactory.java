@@ -1,5 +1,12 @@
-package de.mxlink.cmapp;
+package de.mxlink.cmapp.machine;
 
+import de.mxlink.cmapp.MainActivity;
+
+/**
+ * utility class to access an instance of LEDMatrixBTConn in connected state
+ * @author maxi
+ *
+ */
 public class ConnectionMachineFactory {
 
 	private static LEDMatrixBTConn m_machine;

@@ -1,7 +1,12 @@
-package de.mxlink.cmapp;
+package de.mxlink.cmapp.machine;
 
 import android.util.Log;
 
+/**
+ * A pattern displayable on the connection machine's panels
+ * @author maxi
+ *
+ */
 public class Pattern {
 
 	private byte[] m_pattern;
@@ -18,17 +23,27 @@ public class Pattern {
 		m_y = y;
 	}
 	
+	/**
+	 * add a subpattern, the pattern will turn on any led previously turned on or turned on by given pattern
+	 * @param pattern subpattern to add
+	 */
 	public void addLeds(byte[] pattern) {
 		for (int i = 0; i < m_x * m_y; i++)
 			if (pattern[i] != 0)
 				m_pattern[i] = (byte)255;
 	}
 	
+	/**
+	 * resets the pattern to not display anything
+	 */
 	public void clear() {
 		for (int i = 0; i < m_x * m_y; i++)
 			m_pattern[i] = 0;
 	}
 	
+	/**
+	 * displays the pattern on the connection machine
+	 */
 	public void display() {
 		// Start BT sending thread.
         Thread sender = new Thread() {            
@@ -48,6 +63,10 @@ public class Pattern {
 		sender.start();
 	}
 	
+	/**
+	 * lets the pattern appear and disappear several times on the connection machine
+	 * @return
+	 */
 	public int blink() {
         Thread sender = new Thread() {
             

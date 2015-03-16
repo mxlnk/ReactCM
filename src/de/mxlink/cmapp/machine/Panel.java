@@ -1,11 +1,17 @@
-package de.mxlink.cmapp;
+package de.mxlink.cmapp.machine;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mxlink.cmapp.game.GameMaster;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+/**
+ * represents a led panel on the connection machine, basically an observer on the buttons and a subject for the GameMaster
+ * @author maxi
+ *
+ */
 public class Panel implements OnClickListener {
 	
 	private byte[] m_leds;

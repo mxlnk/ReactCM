@@ -1,4 +1,4 @@
-package de.mxlink.cmapp;
+package de.mxlink.cmapp.machine;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

@@ -1,14 +1,25 @@
-package de.mxlink.cmapp;
+package de.mxlink.cmapp.game;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mxlink.cmapp.GameOverActivity;
+import de.mxlink.cmapp.MainActivity;
+import de.mxlink.cmapp.machine.ConnectionMachineFactory;
+import de.mxlink.cmapp.machine.Panel;
+import de.mxlink.cmapp.machine.Pattern;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
+/**
+ * controls the game, decides which panels get active and how much time the player has to react
+ * @author maxi
+ *
+ */
 public class GameMaster {
 	public static final String ROUNDS = "de.mxlink.rounds";
+	public static final String LOGGING = "game";
 	
 	private Activity m_gameActivity;
 	
@@ -31,10 +42,12 @@ public class GameMaster {
 	}
 	
 	/**
-	 * start game starting in round
+	 * start game starting from round
 	 * @param round the round to start from
 	 */
 	public void startGame(int round) {
+		if (m_panels.isEmpty())
+			gameOver(m_panels);
 		m_gameOver = false;
 		m_round = round;
 		Pattern currentPattern = new Pattern(MainActivity.X_SIZE, MainActivity.Y_SIZE, ConnectionMachineFactory.getMachine());
@@ -43,7 +56,7 @@ public class GameMaster {
 			m_round++;
 			int timeForRound = getTime(m_round);
 			m_activePanels = getPanels(m_round);
-			Log.i("GAME", "round " + m_round + " with time " + timeForRound);
+			Log.i(LOGGING, "round " + m_round + " with time " + timeForRound);
 			for (Panel p : m_activePanels) {
 				p.activate();
 				currentPattern.addLeds(p.getLeds());
@@ -67,16 +80,18 @@ public class GameMaster {
 	 */
 	public void gameOver(List<Panel> panels) {
 		m_gameOver = true;
-		Pattern over = new Pattern(MainActivity.X_SIZE, MainActivity.Y_SIZE, ConnectionMachineFactory.getMachine());
-		for (Panel p : panels)
-			over.addLeds(p.getLeds());
-		
-		int delay = over.blink();
-		
-		try {
-			Thread.sleep(delay, 0);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (!panels.isEmpty()) {
+			Pattern over = new Pattern(MainActivity.X_SIZE, MainActivity.Y_SIZE, ConnectionMachineFactory.getMachine());
+			for (Panel p : panels)
+				over.addLeds(p.getLeds());
+			
+			int delay = over.blink();
+			
+			try {
+				Thread.sleep(delay, 0);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		Intent intent = new Intent(m_gameActivity, GameOverActivity.class);
 		intent.putExtra(ROUNDS, "" + (m_round - 1));
@@ -137,6 +152,10 @@ public class GameMaster {
 		return time;
 	}
 	
+	/**
+	 * 
+	 * @return true if game is over, false otherwise
+	 */
 	public boolean gameOver() {
 		return m_gameOver;
 	}

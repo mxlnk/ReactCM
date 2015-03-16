@@ -1,5 +1,7 @@
 package de.mxlink.cmapp;
 
+import de.mxlink.cmapp.game.GameMaster;
+import de.mxlink.cmapp.machine.ConnectionMachineFactory;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class GameOverActivity extends Activity {
-	Button m_startButton;
+	private Button m_startButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,6 @@ public class GameOverActivity extends Activity {
 		}
 			
         Intent intent = new Intent(this, GameActivity.class);
-//        intent.putExtra(MainActivity.ORIENTATION, getResources().getConfiguration().orientation);
         startActivity(intent);      
 	}
 }

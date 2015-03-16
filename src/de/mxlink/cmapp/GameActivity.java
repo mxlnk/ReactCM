@@ -3,6 +3,9 @@ package de.mxlink.cmapp;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mxlink.cmapp.game.GameMaster;
+import de.mxlink.cmapp.machine.ConnectionMachineFactory;
+import de.mxlink.cmapp.machine.Panel;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,16 +28,12 @@ public class GameActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        // take over orientation from previous activity, but don't allow changes
-        /*int orientation = getIntent().getExtras().getInt(MainActivity.ORIENTATION);
-        getResources().getConfiguration();
-		if (orientation == Configuration.ORIENTATION_LANDSCAPE)  
-        	requestWindowFeature(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        else
-        	requestWindowFeature(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		*/
+
         setContentView(R.layout.activity_game);
 
+        /*
+         * initialize panels and according buttons
+         */
 		byte[] upperLeftLEDs = new byte[MainActivity.X_SIZE * MainActivity.Y_SIZE];
 		byte[] upperRightLEDs = new byte[MainActivity.X_SIZE * MainActivity.Y_SIZE];
 		byte[] lowerLeftLEDs = new byte[MainActivity.X_SIZE * MainActivity.Y_SIZE];
@@ -82,14 +81,6 @@ public class GameActivity extends Activity {
 		game.execute();
 	}
 	
-	/*
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (m_master != null)
-			outState.putInt(ROUND, m_master.getRound());
-	}*/
-	
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -105,7 +96,7 @@ public class GameActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				Thread.sleep(5000, 0);
+				Thread.sleep(4000, 0);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
